@@ -16,7 +16,7 @@ private class PingEvent : RegistrableEvent {
                     .createImmediateResponder()
                     .setContent("pong")
                     .setFlags(MessageFlag.EPHEMERAL)
-                    .respond();
+                    .respond()
             }
         }
     }

@@ -1,6 +1,5 @@
 package hu.kszi2.mse
 
-import hu.kszi2.mse.registrable.*
 import org.javacord.api.*
 import org.javacord.api.entity.intent.Intent
 import java.io.File

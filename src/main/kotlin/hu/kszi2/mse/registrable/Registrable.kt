@@ -41,7 +41,7 @@ private fun DiscordApi.registerEvent(event: RegistrableEvent) {
 /**
  * Registers the extension to the api
  *
- * @param event the registrable event
+ * @param extensions the registrable extensions
  */
 fun DiscordApi.registerExtension(vararg extensions: RegistrableExtension) {
     extensions.forEach { it.registerExtension(this@registerExtension) }

@@ -14,6 +14,9 @@ repositories {
 
 dependencies {
     implementation("org.javacord:javacord:3.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("io.ktor:ktor-client-core:2.2.4")
+    implementation("io.ktor:ktor-client-cio:2.2.4")
 }
 
 tasks.withType<KotlinCompile> {

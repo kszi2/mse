@@ -13,13 +13,15 @@ class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 
 private class StatuschEvent : RegistrableEvent {
     private fun getData(): String {
-        var content = ""
+        var content = "Something went wrong. Try again later."
         val renderer = SimpleDliRenderer()
+        //creating context... mert ugye a szálkezelés egyszerű
         runBlocking {
             val job = launch {
                 renderer.renderData(MosogepApiV1(), MosogepApiV2()) { true }
                 content = renderer.getData()
             }
+            job.join()
         }
         return content
     }
@@ -28,16 +30,13 @@ private class StatuschEvent : RegistrableEvent {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "dmoscht") {
-
-                //creating context... mert ugye a szálkezelés egyszerű
-                //val content = getData()
-
+                val content = getData()
                 interaction
-                    .createFollowupMessageBuilder()
-                    .setContent("LAJOS")
+                    .createImmediateResponder()
+                    .setContent(content)
                     .setFlags(MessageFlag.EPHEMERAL)
-                    .addEmbed(EmbedBuilder())
-                    .send()
+                    .respond()
+
             }
         }
     }

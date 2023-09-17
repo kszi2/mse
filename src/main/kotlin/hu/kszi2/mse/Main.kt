@@ -10,6 +10,5 @@ import hu.kszi2.mse.registrable.registerExtension
 fun main() {
     bot(BOT_TOKEN) {
         registerExtension(Statusch(), Ping())
-        println(createBotInvite())
     }
 }

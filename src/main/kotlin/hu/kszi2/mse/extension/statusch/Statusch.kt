@@ -7,6 +7,10 @@ import org.javacord.api.interaction.*
 import hu.kszi2.moscht.rendering.*
 import kotlinx.coroutines.*
 import org.javacord.api.entity.message.MessageFlag
+import org.javacord.api.entity.message.embed.EmbedBuilder
+import java.awt.Color
+import java.time.Clock
+import java.time.Instant
 
 class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 
@@ -29,13 +33,19 @@ private class StatuschEvent : RegistrableEvent {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "dmoscht") {
-                val content = getData()
+
+                val embed = EmbedBuilder()
+                    .setColor(Color.decode("#FFCCEE"))
+                    .setTitle("StatuSCH :sweat_drops:")
+                    .setDescription(getData())
+                    .setTimestamp(Instant.now(Clock.systemUTC()))
+                    .setUrl("https://mosogep.sch.bme.hu")
+
                 interaction
                     .createImmediateResponder()
-                    .setContent(content)
-                    .setFlags(MessageFlag.EPHEMERAL)
+                    .setContent("")
+                    .addEmbed(embed)
                     .respond()
-
             }
         }
     }

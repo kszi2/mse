@@ -30,10 +30,6 @@ configurations {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 application {
     mainClass.set("hu.kszi2.mse.MainKt")
 }
@@ -42,10 +38,4 @@ tasks.jar {
     manifest {
         attributes["Main-Class"] = application.mainClass
     }
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

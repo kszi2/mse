@@ -49,7 +49,7 @@ private class StatuschEvent : RegistrableEvent {
     override fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
-            if (interaction.fullCommandName == "dmoscht") {
+            if (interaction.fullCommandName == "moscht") {
                 val expr = interaction.getArgumentStringValueByName("argument")
 
                 val filter = if (expr.isPresent) {

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "hu.kszi2"
-version = "1.0-SNAPSHOT"
+version = "v1.0"
 
 repositories {
     mavenCentral()
@@ -20,10 +20,32 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.2.4")
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
+configurations {
+    implementation {
+        exclude("org.slf4j", "slf4j-simple")
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("hu.kszi2.mse.MainKt")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+    }
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

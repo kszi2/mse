@@ -7,7 +7,6 @@ import org.javacord.api.interaction.*
 import hu.kszi2.moscht.rendering.*
 import kotlinx.coroutines.*
 import org.javacord.api.entity.message.MessageFlag
-import org.javacord.api.entity.message.embed.EmbedBuilder
 
 class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 

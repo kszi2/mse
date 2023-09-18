@@ -15,13 +15,17 @@ import kotlinx.coroutines.withTimeout
 import org.javacord.api.DiscordApi
 import org.javacord.api.interaction.SlashCommand
 import org.javacord.api.interaction.SlashCommandInteraction
-import org.javacord.api.interaction.SlashCommandOption
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
 public class SchPincerEvent : RegistrableEvent {
 
-    public fun getCurrOpening(): Sequence<MatchResult> {
+    private data class Opening(val name: String, val date: Instant)
+
+    private fun apiParseBody(): Set<Opening> {
         var body: String?
         runBlocking {
             withTimeout(2000) {
@@ -35,7 +39,17 @@ public class SchPincerEvent : RegistrableEvent {
 
         //filter
         //src: @bodand
-        return Regex("\"circleName\":\"(?<name>.+?)\"").findAll(body!!)
+        val ret: MutableList<Opening> = MutableList(0) { Opening("", Instant.EPOCH) }
+        Regex("\"circleName\":\"(?<name>.+?)\"").findAll(body!!).forEach {
+            ret.add(
+                Opening(
+                    it.destructured.component1(),
+                    LocalDateTime.ofEpochSecond(it.destructured.component2().toLong(), 0, ZoneOffset.UTC)
+                        .toInstant(null)
+                )
+            )
+        }
+        return ret
     }
 
     @OptIn(InternalAPI::class)

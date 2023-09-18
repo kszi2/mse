@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
  * This is where your bot is...
  */
 fun main() {
-    SchPincerEvent().getCurrOpening().forEach { println(it.groups["name"]?.value) }
+    SchPincerEvent().getCurrOpening().forEach { println(it) }
 
 //    bot(BOT_TOKEN) {
 //        registerExtension(Statusch(), Ping(), SchPincer())

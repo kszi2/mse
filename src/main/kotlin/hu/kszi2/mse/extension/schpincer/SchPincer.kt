@@ -1,31 +1,22 @@
 package hu.kszi2.mse.extension.schpincer
 
-import hu.kszi2.mse.registrable.RegistrableCommand
-import hu.kszi2.mse.registrable.RegistrableEvent
-import hu.kszi2.mse.registrable.RegistrableExtension
+import hu.kszi2.mse.registrable.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.*
+import kotlinx.serialization.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.javacord.api.DiscordApi
-import org.javacord.api.entity.message.component.ActionRow
-import org.javacord.api.entity.message.component.Button
+import org.javacord.api.entity.message.component.*
 import org.javacord.api.entity.message.embed.EmbedBuilder
-import org.javacord.api.interaction.SlashCommand
-import org.javacord.api.interaction.SlashCommandInteraction
+import org.javacord.api.interaction.*
 import java.awt.Color
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.*
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
@@ -84,7 +75,7 @@ private class SchPincerEvent : RegistrableEvent {
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0"
             }
         }
-        return run { withTimeout(1000) { client.get(url).body() } }
+        return run { withTimeout(2000) { client.get(url).body() } }
     }
 
     private fun parseDateTime(datetime: LocalDateTime) =

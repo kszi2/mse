@@ -18,7 +18,6 @@ import kotlinx.serialization.json.Json
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.message.component.ActionRow
 import org.javacord.api.entity.message.component.Button
-import org.javacord.api.entity.message.component.HighLevelComponent
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.interaction.SlashCommand
 import org.javacord.api.interaction.SlashCommandInteraction
@@ -43,6 +42,13 @@ private class SchPincerEvent : RegistrableEvent {
                 return this.name == other.name && this.epoch == other.epoch
             }
             return false
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + epoch.hashCode()
+            result = 31 * result + negstock.hashCode()
+            return result
         }
     }
 
@@ -98,7 +104,6 @@ private class SchPincerEvent : RegistrableEvent {
             .setTitle("Openings :fork_and_knife:")
             .setTimestamp(Instant.now(Clock.systemUTC()))
             .setUrl("https://schpincer.sch.bme.hu")
-            .setDescription("")
 
         //if there aren't any openings
         if (openings.isEmpty()) {
@@ -134,13 +139,11 @@ private class SchPincerEvent : RegistrableEvent {
 
                 //handling empty openings
                 val resp = interaction.createImmediateResponder()
-
                 if (openings.isNotEmpty()) {
                     resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
                 }
 
                 resp
-                    .setContent("")
                     .addEmbed(generateEmbed(openings))
                     .respond()
             }

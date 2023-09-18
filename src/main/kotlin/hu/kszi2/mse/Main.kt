@@ -5,16 +5,16 @@ import hu.kszi2.mse.extension.schpincer.SchPincer
 import hu.kszi2.mse.extension.schpincer.SchPincerEvent
 import hu.kszi2.mse.extension.statusch.Statusch
 import hu.kszi2.mse.registrable.registerExtension
-import kotlinx.coroutines.runBlocking
 
 /**
  * This is where your bot is...
  */
-fun main() {
-    SchPincerEvent().getCurrOpening().forEach { println(it) }
+suspend fun main() {
 
-//    bot(BOT_TOKEN) {
-//        registerExtension(Statusch(), Ping(), SchPincer())
-//        println(createBotInvite().toString())
-//    }
+SchPincerEvent().apiParseBody().forEach{ println(it)}
+
+    bot(BOT_TOKEN) {
+        registerExtension(Statusch(), Ping(), SchPincer())
+        println(createBotInvite().toString())
+    }
 }

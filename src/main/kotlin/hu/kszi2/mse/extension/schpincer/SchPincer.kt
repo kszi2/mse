@@ -13,10 +13,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.javacord.api.DiscordApi
+import org.javacord.api.entity.message.component.ActionRow
+import org.javacord.api.entity.message.component.Button
+import org.javacord.api.entity.message.component.HighLevelComponent
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.interaction.SlashCommand
 import org.javacord.api.interaction.SlashCommandInteraction
@@ -25,7 +27,6 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import kotlinx.serialization.encodeToString
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
@@ -54,8 +55,16 @@ private class SchPincerEvent : RegistrableEvent {
         //parser
         return try {
             val ret = mutableSetOf<Opening>()
-            ret.addAll(json.decodeFromString<List<Opening>>(now))
-            ret.addAll(json.decodeFromString<List<Opening>>(tomorrow))
+            json.decodeFromString<List<Opening>>(now).forEach {
+                if (!it.negstock) {
+                    ret.add(it)
+                }
+            }
+            json.decodeFromString<List<Opening>>(tomorrow).forEach {
+                if (!it.negstock) {
+                    ret.add(it)
+                }
+            }
             ret
         } catch (_: Throwable) {
             setOf()
@@ -69,7 +78,7 @@ private class SchPincerEvent : RegistrableEvent {
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0"
             }
         }
-        return run { withTimeout(2000) { client.get(url).body() } }
+        return run { withTimeout(1000) { client.get(url).body() } }
     }
 
     private fun parseDateTime(datetime: LocalDateTime) =
@@ -82,6 +91,40 @@ private class SchPincerEvent : RegistrableEvent {
                     datetime.hour.toString().padStart(2, '0')
                 }:${datetime.minute.toString().padStart(2, '0')}"
 
+    private fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
+        //creating embed base
+        val embed = EmbedBuilder()
+            .setColor(Color.decode("#db8b12"))
+            .setTitle("Openings :fork_and_knife:")
+            .setTimestamp(Instant.now(Clock.systemUTC()))
+            .setUrl("https://schpincer.sch.bme.hu")
+            .setDescription("")
+
+        //if there aren't any openings
+        if (openings.isEmpty()) {
+            embed.addField("No openings at the moment!", "Try again later.")
+            return embed
+        }
+
+        embed.addField("Opening name", "", true)
+            .addField("Opening time", "", true)
+            .addField("Availability", "", true)
+
+        openings.forEach {
+            embed.addField("", "**${it.name}**", true)
+            embed.addField("", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.UTC)), true)
+            //making it fancy
+            val aval = if (it.negstock) {
+                ":red_circle:"
+            } else {
+                ":green_circle:"
+            }
+            embed.addField("", aval, true)
+            embed.addField("", "")
+        }
+        return embed
+    }
+
     override fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
@@ -89,23 +132,16 @@ private class SchPincerEvent : RegistrableEvent {
                 //fetch openings
                 val openings = runBlocking { apiParseBody() }
 
-                //creating embed
-                val embed = EmbedBuilder()
-                    .setColor(Color.decode("#FFCCEE"))
-                    .setTitle("Openings :fork_and_knife:")
-                    .setTimestamp(Instant.now(Clock.systemUTC()))
-                    .setUrl("https://schpincer.sch.bme.hu")
+                //handling empty openings
+                val resp = interaction.createImmediateResponder()
 
-                openings.forEach {
-                    embed.addField("", it.name, true)
-                    embed.addField("", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.UTC)), true)
-                    embed.addField("", "")
+                if (openings.isNotEmpty()) {
+                    resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
                 }
 
-                interaction
-                    .createImmediateResponder()
+                resp
                     .setContent("")
-                    .addEmbed(embed)
+                    .addEmbed(generateEmbed(openings))
                     .respond()
             }
         }

@@ -8,7 +8,7 @@ import hu.kszi2.mse.registrable.registerExtension
 /**
  * This is where your bot is...
  */
-suspend fun main() {
+fun main() {
     bot(BOT_TOKEN) {
         registerExtension(Statusch(), Ping(), SchPincer())
         println(createBotInvite().toString())

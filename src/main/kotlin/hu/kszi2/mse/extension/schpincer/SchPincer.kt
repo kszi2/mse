@@ -102,20 +102,8 @@ private class SchPincerEvent : RegistrableEvent {
             return embed
         }
 
-        embed.addField("Opening name", "", true)
-            .addField("Opening time", "", true)
-            .addField("Availability", "", true)
-
         openings.forEach {
-            embed.addField("", "**${it.name}**", true)
-            embed.addField("", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.UTC)), true)
-            //making it fancy
-            val aval = if (it.negstock) {
-                ":red_circle:"
-            } else {
-                ":green_circle:"
-            }
-            embed.addField("", aval, true)
+            embed.addField("**${it.name}** :green_circle:", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.UTC)), true)
             embed.addField("", "")
         }
         return embed

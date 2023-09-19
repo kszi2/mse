@@ -12,7 +12,7 @@ class Kortex {
         val DEFAULT = Kortex()
     }
 
-    suspend fun <R> krunonce(ignoredBlock: () -> R): R {
+    suspend fun <R> krunonce(ignoredBlock: suspend () -> R): R {
         val ret = scope.async {
             delay(this@Kortex.interval.delay)
             ignoredBlock()
@@ -20,7 +20,7 @@ class Kortex {
         return ret
     }
 
-    suspend fun <R> krun(ignoredBlock: () -> R): Job {
+    suspend fun <R> krun(ignoredBlock: suspend () -> R): Job {
         val job = scope.async {
             while (true) {
                 ignoredBlock()

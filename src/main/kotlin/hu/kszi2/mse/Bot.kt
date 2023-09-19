@@ -1,5 +1,7 @@
 package hu.kszi2.mse
 
+import hu.kszi2.kortex.*
+import kotlinx.coroutines.*
 import org.javacord.api.*
 import org.javacord.api.entity.intent.Intent
 import java.io.File
@@ -21,14 +23,16 @@ internal val BOT_TOKEN = try {
  * Creates a Discord bot via the api
  *
  * @param token the bot token used for authentication
+ * @return the constructed DiscordApi
  */
 
-fun bot(token: String, ignoredApi: DiscordApi.() -> Unit) {
+fun bot(token: String, ignoredApi: DiscordApi.() -> Unit): DiscordApi {
     val apibuild = DiscordApiBuilder()
         .setToken(token)
         .addIntents(Intent.MESSAGE_CONTENT)
         .login().join()
 
     apibuild.ignoredApi()
+    return apibuild
 }
 

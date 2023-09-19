@@ -1,4 +1,4 @@
-package hu.kszi2.kabal
+package hu.kszi2.kortex
 
 import kotlin.properties.Delegates
 
@@ -42,6 +42,18 @@ class KortexInterval {
         this.millis = this.delay * other
     }
 
+    operator fun KortexInterval.timesAssign(other: Long) {
+        this.millis = this.delay * other
+    }
+
+    operator fun KortexInterval.divAssign(other: Int) {
+        this.millis = this.delay / other
+    }
+
+    operator fun KortexInterval.divAssign(other: Long) {
+        this.millis = this.delay / other
+    }
+    
     override operator fun equals(other: Any?): Boolean {
         if (other is KortexInterval) {
             return other.millis == this.millis
@@ -55,6 +67,10 @@ class KortexInterval {
 }
 
 operator fun KortexInterval.times(other: Int): KortexInterval {
+    return KortexInterval(this.delay * other)
+}
+
+operator fun KortexInterval.times(other: Long): KortexInterval {
     return KortexInterval(this.delay * other)
 }
 

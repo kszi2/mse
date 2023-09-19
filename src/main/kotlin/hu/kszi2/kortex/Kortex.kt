@@ -1,4 +1,4 @@
-package hu.kszi2.kabal
+package hu.kszi2.kortex
 
 import kotlinx.coroutines.*
 import kotlin.run
@@ -18,7 +18,7 @@ class Kortex {
         val DEFAULT = Kortex()
     }
 
-    internal suspend fun <R> krunonce(block: () -> R): R {
+    suspend fun <R> krunonce(block: () -> R): R {
         val ret = scope.async {
             delay(this@Kortex.interval.delay)
             block()

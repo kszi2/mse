@@ -5,7 +5,7 @@ import org.javacord.api.entity.message.MessageBuilder
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.awt.Color
 
-fun schpincerroutine(api: DiscordApi) {
+fun schpincerJob(api: DiscordApi) {
     val channel = api.getTextChannelById("1147612128103125104")
     if (channel.isEmpty) {
         return

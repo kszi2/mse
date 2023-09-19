@@ -25,11 +25,11 @@ internal val BOT_TOKEN = try {
  */
 
 suspend fun bot(token: String, ignoredApi: suspend DiscordApi.() -> Unit) {
-    val apibuild = DiscordApiBuilder()
+    val api = DiscordApiBuilder()
         .setToken(token)
         .addIntents(Intent.MESSAGE_CONTENT)
         .login().join()
 
-    apibuild.ignoredApi()
+    api.ignoredApi()
 }
 

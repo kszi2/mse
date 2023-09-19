@@ -19,8 +19,7 @@ class KortexInterval {
         millis = milliseconds
     }
 
-    constructor(seconds: Int) : this((seconds * 1000).toLong()) {
-    }
+    constructor(seconds: Int) : this((seconds * 1000).toLong())
 
     constructor(minutes: Int, seconds: Int) {
         require(minutes in 0..60) { "Minutes must be between 0 and 60" }
@@ -53,7 +52,7 @@ class KortexInterval {
     operator fun KortexInterval.divAssign(other: Long) {
         this.millis = this.delay / other
     }
-    
+
     override operator fun equals(other: Any?): Boolean {
         if (other is KortexInterval) {
             return other.millis == this.millis

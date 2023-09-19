@@ -16,7 +16,7 @@ suspend fun main() {
 
         kortex {
             interval = KortexInterval.SECOND * 3
-            krun { schpincerroutine(this@bot) }
+            krun { schpincerJob(this@bot) }
         }
     }
 }

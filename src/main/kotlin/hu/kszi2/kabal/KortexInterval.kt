@@ -2,15 +2,15 @@ package hu.kszi2.kabal
 
 import kotlin.properties.Delegates
 
-class KabalInterval {
+class KortexInterval {
     companion object {
-        val SECOND = KabalInterval(1000L)
+        val SECOND = KortexInterval(1000L)
 
-        val MINUTE = KabalInterval(60)
+        val MINUTE = KortexInterval(60)
 
-        val HOUR = KabalInterval(1, 0, 0)
+        val HOUR = KortexInterval(1, 0, 0)
 
-        val DAY = KabalInterval(24, 0, 0)
+        val DAY = KortexInterval(24, 0, 0)
     }
 
     private var millis by Delegates.notNull<Long>()
@@ -38,12 +38,12 @@ class KabalInterval {
             return millis
         }
 
-    operator fun KabalInterval.timesAssign(other: Int) {
+    operator fun KortexInterval.timesAssign(other: Int) {
         this.millis = this.delay * other
     }
 
     override operator fun equals(other: Any?): Boolean {
-        if (other is KabalInterval) {
+        if (other is KortexInterval) {
             return other.millis == this.millis
         }
         return false
@@ -54,14 +54,14 @@ class KabalInterval {
     }
 }
 
-operator fun KabalInterval.times(other: Int): KabalInterval {
-    return KabalInterval(this.delay * other)
+operator fun KortexInterval.times(other: Int): KortexInterval {
+    return KortexInterval(this.delay * other)
 }
 
-operator fun KabalInterval.div(other: Int): KabalInterval {
-    return KabalInterval(this.delay / other)
+operator fun KortexInterval.div(other: Int): KortexInterval {
+    return KortexInterval(this.delay / other)
 }
 
-operator fun KabalInterval.div(other: Long): KabalInterval {
-    return KabalInterval(this.delay / other)
+operator fun KortexInterval.div(other: Long): KortexInterval {
+    return KortexInterval(this.delay / other)
 }

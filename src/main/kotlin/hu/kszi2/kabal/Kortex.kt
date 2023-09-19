@@ -4,9 +4,9 @@ import kotlinx.coroutines.*
 import kotlin.run
 
 @OptIn(DelicateCoroutinesApi::class)
-class Kabal {
+class Kortex {
     private var scope: GlobalScope = GlobalScope
-    var interval: KabalInterval = KabalInterval.SECOND
+    var interval: KortexInterval = KortexInterval.SECOND
         get() {
             return field
         }
@@ -15,12 +15,12 @@ class Kabal {
         }
 
     companion object {
-        val DEFAULT = Kabal()
+        val DEFAULT = Kortex()
     }
 
     internal suspend fun <R> krunonce(block: () -> R): R {
         val ret = scope.async {
-            delay(this@Kabal.interval.delay)
+            delay(this@Kortex.interval.delay)
             block()
         }.await()
         return ret
@@ -30,7 +30,7 @@ class Kabal {
         val job = scope.async {
             while (true) {
                 block()
-                delay(this@Kabal.interval.delay)
+                delay(this@Kortex.interval.delay)
             }
 
         }
@@ -38,6 +38,6 @@ class Kabal {
     }
 }
 
-suspend fun <R> kabal(func: suspend Kabal.() -> R): R {
-    return run { Kabal.DEFAULT.func() }
+suspend fun <R> kortex(func: suspend Kortex.() -> R): R {
+    return run { Kortex.DEFAULT.func() }
 }

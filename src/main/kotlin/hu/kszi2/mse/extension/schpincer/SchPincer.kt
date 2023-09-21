@@ -1,5 +1,8 @@
 package hu.kszi2.mse.extension.schpincer
 
+import hu.kszi2.mse.database.DBOpening
+import hu.kszi2.mse.database.DBOpenings
+import hu.kszi2.mse.database.dbTransaction
 import hu.kszi2.mse.registrable.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -9,24 +12,25 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.javacord.api.DiscordApi
+import org.javacord.api.entity.message.MessageBuilder
 import org.javacord.api.entity.message.component.*
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.interaction.*
+import org.jetbrains.exposed.sql.selectAll
 import java.awt.Color
 import java.time.*
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
-private class SchPincerEvent : RegistrableEvent {
+class SchPincerEvent : RegistrableEvent {
 
     @Serializable
     data class Opening(
-        @SerialName("circleName") val name: String,
-        @SerialName("nextOpeningDate") val epoch: Long,
-        @SerialName("outOfStock") val negstock: Boolean
+        @SerialName("circleName") var name: String,
+        @SerialName("nextOpeningDate") var epoch: Long,
+        @SerialName("outOfStock") var negstock: Boolean
     ) {
         override operator fun equals(other: Any?): Boolean {
             if (other is Opening) {
@@ -45,7 +49,7 @@ private class SchPincerEvent : RegistrableEvent {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    private suspend fun apiParseBody(): Set<Opening> {
+    suspend fun apiParseBody(): Set<Opening> {
         val now: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/now"))
         val tomorrow: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/tomorrow"))
 
@@ -88,7 +92,7 @@ private class SchPincerEvent : RegistrableEvent {
                     datetime.hour.toString().padStart(2, '0')
                 }:${datetime.minute.toString().padStart(2, '0')}"
 
-    private fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
+    fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
         //creating embed base
         val embed = EmbedBuilder()
             .setColor(Color.decode("#db8b12"))
@@ -133,5 +137,68 @@ private class SchPincerEvent : RegistrableEvent {
 private class SchPincerCommand : RegistrableCommand {
     override fun registerCommand(api: DiscordApi) {
         SlashCommand.with("opening", "Request SCH-PINCÉR openings.").createGlobal(api).join()
+    }
+}
+
+fun schpincerDatabaseJob(): List<SchPincerEvent.Opening> {
+    val event = SchPincerEvent()
+    val apiOpeningContent = runBlocking { event.apiParseBody().toMutableList() }
+
+    if (apiOpeningContent.isEmpty()) {
+        return listOf() //empty list
+    }
+
+    val databaseOpeningContent = readOpeningsFromDB()
+
+    apiOpeningContent.removeAll(databaseOpeningContent)
+
+    if (apiOpeningContent.isEmpty()) {
+        return listOf()
+    }
+
+    return apiOpeningContent
+}
+
+fun readOpeningsFromDB(): MutableList<SchPincerEvent.Opening> {
+    var databaseOpeningContent = mutableListOf<SchPincerEvent.Opening>()
+
+    dbTransaction {
+        databaseOpeningContent = DBOpenings.selectAll().map {
+            SchPincerEvent.Opening(
+                it[DBOpenings.circleName],
+                it[DBOpenings.nextOpeningDate],
+                it[DBOpenings.outOfStock]
+            )
+        }.toMutableList()
+    }
+
+    return databaseOpeningContent
+}
+
+fun schpincerJob(api: DiscordApi) {
+    val channel = api.getTextChannelById("1147612128103125104")
+    if (channel.isEmpty) {
+        return
+    }
+
+    val openings = schpincerDatabaseJob()
+
+    if (openings.isNotEmpty()) {
+        val event = SchPincerEvent()
+        //handling empty openings
+        val resp = MessageBuilder()
+        resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
+
+        dbTransaction {
+            openings.forEach {
+                DBOpening.new {
+                    circleName = it.name
+                    nextOpeningDate = it.epoch
+                    outOfStock = it.negstock
+                }
+            }
+        }
+
+        resp.setEmbed(event.generateEmbed(readOpeningsFromDB().toSet())).send(channel.get())
     }
 }

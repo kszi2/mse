@@ -18,6 +18,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("io.ktor:ktor-client-core:2.2.4")
     implementation("io.ktor:ktor-client-cio:2.2.4")
+
+    implementation ("org.jetbrains.exposed:exposed-core:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-crypt:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-dao:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-jdbc:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-kotlin-datetime:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-json:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-money:0.43.0")
+    implementation ("org.jetbrains.exposed:exposed-spring-boot-starter:0.43.0")
+    implementation ("org.xerial:sqlite-jdbc:3.30.1")
 }
 
 kotlin {

@@ -5,15 +5,10 @@ import kotlin.run
 
 @OptIn(DelicateCoroutinesApi::class)
 class Kortex {
-    private var scope: GlobalScope = GlobalScope
     var interval: KortexInterval = KortexInterval.SECOND
 
-    companion object {
-        val DEFAULT = Kortex()
-    }
-
     suspend fun <R> krunonce(ignoredBlock: suspend () -> R): R {
-        val ret = scope.async {
+        val ret = GlobalScope.async {
             delay(this@Kortex.interval.delay)
             ignoredBlock()
         }.await()
@@ -21,7 +16,7 @@ class Kortex {
     }
 
     suspend fun <R> krun(ignoredBlock: suspend () -> R): Job {
-        val job = scope.async {
+        val job = GlobalScope.async {
             while (true) {
                 ignoredBlock()
                 delay(this@Kortex.interval.delay)
@@ -33,5 +28,5 @@ class Kortex {
 }
 
 suspend fun <R> kortex(ignoredFunc: suspend Kortex.() -> R): R {
-    return run { Kortex.DEFAULT.ignoredFunc() }
+    return run { Kortex().ignoredFunc() }
 }

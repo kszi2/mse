@@ -24,7 +24,7 @@ import java.time.*
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
-class SchPincerEvent : RegistrableEvent {
+internal class SchPincerEvent : RegistrableEvent {
 
     @Serializable
     data class Opening(
@@ -140,7 +140,12 @@ private class SchPincerCommand : RegistrableCommand {
     }
 }
 
-fun schpincerDatabaseJob(): List<SchPincerEvent.Opening> {
+/**
+ * Database related stuff
+ */
+
+
+private fun getNewOpeningsViaAPI(): List<SchPincerEvent.Opening> {
     val event = SchPincerEvent()
     val apiOpeningContent = runBlocking { event.apiParseBody().toMutableList() }
 
@@ -159,7 +164,7 @@ fun schpincerDatabaseJob(): List<SchPincerEvent.Opening> {
     return apiOpeningContent
 }
 
-fun readOpeningsFromDB(): MutableList<SchPincerEvent.Opening> {
+private fun readOpeningsFromDB(): MutableList<SchPincerEvent.Opening> {
     var databaseOpeningContent = mutableListOf<SchPincerEvent.Opening>()
 
     dbTransaction {
@@ -175,22 +180,12 @@ fun readOpeningsFromDB(): MutableList<SchPincerEvent.Opening> {
     return databaseOpeningContent
 }
 
-fun schpincerJob(api: DiscordApi) {
-    val channel = api.getTextChannelById("1147612128103125104")
-    if (channel.isEmpty) {
-        return
-    }
+private fun moveNewOpeningsToDB(): List<SchPincerEvent.Opening> {
+    val newOpenings = getNewOpeningsViaAPI()
 
-    val openings = schpincerDatabaseJob()
-
-    if (openings.isNotEmpty()) {
-        val event = SchPincerEvent()
-        //handling empty openings
-        val resp = MessageBuilder()
-        resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
-
+    if (newOpenings.isNotEmpty()) {
         dbTransaction {
-            openings.forEach {
+            newOpenings.forEach {
                 DBOpening.new {
                     circleName = it.name
                     nextOpeningDate = it.epoch
@@ -198,7 +193,26 @@ fun schpincerJob(api: DiscordApi) {
                 }
             }
         }
+    }
 
-        resp.setEmbed(event.generateEmbed(readOpeningsFromDB().toSet())).send(channel.get())
+    return newOpenings
+}
+
+fun announceNewOpening(api: DiscordApi) {
+    val channel = api.getTextChannelById("1147612128103125104")
+
+    if (channel.isEmpty) {
+        return
+    }
+
+    val newOpenings = moveNewOpeningsToDB()
+
+    if (newOpenings.isNotEmpty()) {
+        val event = SchPincerEvent()
+        //handling empty openings
+        val resp = MessageBuilder()
+        resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
+
+        resp.setEmbed(event.generateEmbed(newOpenings.toSet())).send(channel.get())
     }
 }

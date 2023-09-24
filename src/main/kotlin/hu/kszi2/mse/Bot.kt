@@ -22,7 +22,6 @@ internal val BOT_TOKEN = try {
  *
  * @param token the bot token used for authentication
  */
-
 suspend fun bot(token: String, ignoredApi: suspend DiscordApi.() -> Unit) {
     val api = DiscordApiBuilder()
         .setToken(token)

@@ -198,7 +198,7 @@ private fun moveNewOpeningsToDB(): List<SchPincerEvent.Opening> {
     return newOpenings
 }
 
-fun announceNewOpening(api: DiscordApi) {
+fun announceNewOpening(api: DiscordApi): Unit {
     val channel = api.getTextChannelById("1147612128103125104")
 
     if (channel.isEmpty) {

@@ -19,6 +19,7 @@ suspend fun main() {
     bot(BOT_TOKEN) {
         registerExtension(Statusch(), Ping(), SchPincer())
         println(createBotInvite().toString())
+
         registerJob(KortexInterval.MINUTE * 5) { announceNewOpening(this@bot) }
     }
 }

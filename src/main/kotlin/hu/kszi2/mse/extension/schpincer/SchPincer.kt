@@ -49,7 +49,7 @@ internal class SchPincerEvent : RegistrableEvent {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun apiParseBody(): Set<Opening> {
+    internal suspend fun apiParseBody(): Set<Opening> {
         val now: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/now"))
         val tomorrow: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/tomorrow"))
 
@@ -92,7 +92,7 @@ internal class SchPincerEvent : RegistrableEvent {
                     datetime.hour.toString().padStart(2, '0')
                 }:${datetime.minute.toString().padStart(2, '0')}"
 
-    fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
+    internal fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
         //creating embed base
         val embed = EmbedBuilder()
             .setColor(Color.decode("#db8b12"))
@@ -107,7 +107,7 @@ internal class SchPincerEvent : RegistrableEvent {
         }
 
         openings.forEach {
-            embed.addField("**${it.name}** :green_circle:", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.UTC)), true)
+            embed.addField("**${it.name}** :green_circle:", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.ofHours(2))), true)
             embed.addField("", "")
         }
         return embed
@@ -117,8 +117,11 @@ internal class SchPincerEvent : RegistrableEvent {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "opening") {
+                //clean out old openings
+                cleanOpeningsFromDB()
+
                 //fetch openings
-                val openings = runBlocking { apiParseBody() }
+                val openings = readOpeningsFromDB()
 
                 //handling empty openings
                 val resp = interaction.createImmediateResponder()
@@ -127,7 +130,7 @@ internal class SchPincerEvent : RegistrableEvent {
                 }
 
                 resp
-                    .addEmbed(generateEmbed(openings))
+                    .addEmbed(generateEmbed(openings.toSet()))
                     .respond()
             }
         }
@@ -143,7 +146,6 @@ private class SchPincerCommand : RegistrableCommand {
 /**
  * Database related stuff
  */
-
 
 private fun getNewOpeningsViaAPI(): List<SchPincerEvent.Opening> {
     val event = SchPincerEvent()
@@ -196,6 +198,15 @@ private fun moveNewOpeningsToDB(): List<SchPincerEvent.Opening> {
     }
 
     return newOpenings
+}
+
+private fun cleanOpeningsFromDB() {
+    dbTransaction {
+        val oldOpenings = DBOpening.find {
+            DBOpenings.nextOpeningDate lessEq LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(0))
+        }
+        oldOpenings.forEach { it.delete() }
+    }
 }
 
 fun announceNewOpening(api: DiscordApi): Unit {

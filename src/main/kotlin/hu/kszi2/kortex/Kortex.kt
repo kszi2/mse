@@ -1,6 +1,7 @@
 package hu.kszi2.kortex
 
 import kotlinx.coroutines.*
+import kotlinx.datetime.LocalTime
 import org.slf4j.LoggerFactory
 import kotlin.run
 
@@ -12,9 +13,9 @@ class Kortex {
 
     private fun announceJobRun(interval: KortexInterval, recurring: Boolean = false) {
         if (recurring) {
-            logger.debug("Running recurring job with name: ${Thread.currentThread().stackTrace[1].methodName} and ${interval.delay} ms delay")
+            logger.debug("Running recurring job with name {} and {} delay", Thread.currentThread().stackTrace[1].methodName, LocalTime.fromMillisecondOfDay(interval.delay.toInt()))
         } else {
-            logger.debug("Running one-time job with name: ${Thread.currentThread().stackTrace[1].methodName}")
+            logger.debug("Running one-time job with name ${Thread.currentThread().stackTrace[1].methodName}")
         }
     }
 

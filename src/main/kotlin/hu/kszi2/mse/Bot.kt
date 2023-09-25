@@ -22,13 +22,12 @@ internal val BOT_TOKEN = try {
  *
  * @param token the bot token used for authentication
  */
-
-fun bot(token: String, ignoredApi: DiscordApi.() -> Unit) {
-    val apibuild = DiscordApiBuilder()
+suspend fun bot(token: String, ignoredApi: suspend DiscordApi.() -> Unit) {
+    val api = DiscordApiBuilder()
         .setToken(token)
         .addIntents(Intent.MESSAGE_CONTENT)
         .login().join()
 
-    apibuild.ignoredApi()
+    api.ignoredApi()
 }
 

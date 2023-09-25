@@ -1,8 +1,6 @@
 package hu.kszi2.mse.extension.schpincer
 
-import hu.kszi2.mse.database.DBOpening
-import hu.kszi2.mse.database.DBOpenings
-import hu.kszi2.mse.database.dbTransaction
+import hu.kszi2.mse.database.*
 import hu.kszi2.mse.registrable.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -17,10 +15,21 @@ import org.javacord.api.DiscordApi
 import org.javacord.api.entity.message.MessageBuilder
 import org.javacord.api.entity.message.component.*
 import org.javacord.api.entity.message.embed.EmbedBuilder
+import org.javacord.api.entity.message.mention.AllowedMentionsBuilder
 import org.javacord.api.interaction.*
 import org.jetbrains.exposed.sql.selectAll
 import java.awt.Color
 import java.time.*
+
+/**
+ * The ID of the notification role
+ */
+const val notificationRoleID: String = "1046057288496054272"
+
+/**
+ * The ID of the notification channel
+ */
+const val notificationChannelID: String = "1147612128103125104"
 
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
@@ -95,7 +104,7 @@ internal class SchPincerEvent : RegistrableEvent {
     internal fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
         //creating embed base
         val embed = EmbedBuilder()
-            .setColor(Color.decode("#db8b12"))
+            .setColor(Color.decode("#FFCCEE"))
             .setTitle("Openings :fork_and_knife:")
             .setTimestamp(Instant.now(Clock.systemUTC()))
             .setUrl("https://schpincer.sch.bme.hu")
@@ -209,8 +218,8 @@ private fun cleanOpeningsFromDB() {
     }
 }
 
-fun announceNewOpening(api: DiscordApi): Unit {
-    val channel = api.getTextChannelById("1147612128103125104")
+fun announceNewOpening(api: DiscordApi) {
+    val channel = api.getTextChannelById(notificationChannelID)
 
     if (channel.isEmpty) {
         return
@@ -222,8 +231,16 @@ fun announceNewOpening(api: DiscordApi): Unit {
         val event = SchPincerEvent()
         //handling empty openings
         val resp = MessageBuilder()
-        resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
+        val notiRole = api.getRoleById(notificationRoleID)
 
-        resp.setEmbed(event.generateEmbed(newOpenings.toSet())).send(channel.get())
+        if (notiRole.isEmpty) {
+            return
+        }
+
+        resp.addComponents(ActionRow.of(Button.link("https://schpincer.sch.bme.hu", "Order!")))
+            .setAllowedMentions(AllowedMentionsBuilder().addRole(notificationRoleID).build())
+            .append(notiRole.get().mentionTag)
+            .setEmbed(event.generateEmbed(newOpenings.toSet()))
+            .send(channel.get())
     }
 }

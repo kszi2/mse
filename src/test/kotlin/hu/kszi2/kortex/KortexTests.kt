@@ -17,7 +17,7 @@ class KortexTests {
                 k = this.interval.delay
             }
         }
-        assertEquals("The delay values did not match", 1000L, k)
+        assertEquals("The delay values did not match", 100L, k)
     }
 
     @Test

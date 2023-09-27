@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "hu.kszi2"
-version = "v1.0"
+version = "v2.0"
 
 repositories {
     mavenCentral()
@@ -19,19 +19,21 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.2.4")
     implementation("io.ktor:ktor-client-cio:2.2.4")
 
-    implementation ("org.jetbrains.exposed:exposed-core:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-crypt:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-dao:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-jdbc:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-kotlin-datetime:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-json:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-money:0.43.0")
-    implementation ("org.jetbrains.exposed:exposed-spring-boot-starter:0.43.0")
-    implementation ("org.xerial:sqlite-jdbc:3.30.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-crypt:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-json:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-money:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.43.0")
+    implementation("org.xerial:sqlite-jdbc:3.30.1")
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(18)
 }
 
 configurations {

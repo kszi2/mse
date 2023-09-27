@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DeployMSE" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="hu.kszi2.mse.MainKt" />
+    <module name="mse.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

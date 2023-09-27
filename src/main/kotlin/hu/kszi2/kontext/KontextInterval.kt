@@ -1,16 +1,16 @@
-package hu.kszi2.kortex
+package hu.kszi2.kontext
 
 import kotlin.properties.Delegates
 
-class KortexInterval {
+class KontextInterval {
     companion object {
-        val SECOND = KortexInterval(1000L)
+        val SECOND = KontextInterval(1000L)
 
-        val MINUTE = KortexInterval(60)
+        val MINUTE = KontextInterval(60)
 
-        val HOUR = KortexInterval(1, 0, 0)
+        val HOUR = KontextInterval(1, 0, 0)
 
-        val DAY = KortexInterval(24, 0, 0)
+        val DAY = KontextInterval(24, 0, 0)
     }
 
     private var millis by Delegates.notNull<Long>()
@@ -37,24 +37,24 @@ class KortexInterval {
             return millis
         }
 
-    operator fun KortexInterval.timesAssign(other: Int) {
+    operator fun KontextInterval.timesAssign(other: Int) {
         this.millis = this.delay * other
     }
 
-    operator fun KortexInterval.timesAssign(other: Long) {
+    operator fun KontextInterval.timesAssign(other: Long) {
         this.millis = this.delay * other
     }
 
-    operator fun KortexInterval.divAssign(other: Int) {
+    operator fun KontextInterval.divAssign(other: Int) {
         this.millis = this.delay / other
     }
 
-    operator fun KortexInterval.divAssign(other: Long) {
+    operator fun KontextInterval.divAssign(other: Long) {
         this.millis = this.delay / other
     }
 
     override operator fun equals(other: Any?): Boolean {
-        if (other is KortexInterval) {
+        if (other is KontextInterval) {
             return other.millis == this.millis
         }
         return false
@@ -65,18 +65,18 @@ class KortexInterval {
     }
 }
 
-operator fun KortexInterval.times(other: Int): KortexInterval {
-    return KortexInterval(this.delay * other)
+operator fun KontextInterval.times(other: Int): KontextInterval {
+    return KontextInterval(this.delay * other)
 }
 
-operator fun KortexInterval.times(other: Long): KortexInterval {
-    return KortexInterval(this.delay * other)
+operator fun KontextInterval.times(other: Long): KontextInterval {
+    return KontextInterval(this.delay * other)
 }
 
-operator fun KortexInterval.div(other: Int): KortexInterval {
-    return KortexInterval(this.delay / other)
+operator fun KontextInterval.div(other: Int): KontextInterval {
+    return KontextInterval(this.delay / other)
 }
 
-operator fun KortexInterval.div(other: Long): KortexInterval {
-    return KortexInterval(this.delay / other)
+operator fun KontextInterval.div(other: Long): KontextInterval {
+    return KontextInterval(this.delay / other)
 }

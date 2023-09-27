@@ -1,6 +1,6 @@
 package hu.kszi2.mse.database
 
-import hu.kszi2.kortex.*
+import hu.kszi2.kontext.*
 import hu.kszi2.mse.DBPATH
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.*
@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.transactions.transactionManager
 import java.io.File
 
-suspend fun <R> registerJob(interval: KortexInterval, ignoredFunc: suspend () -> R) {
-    kortex {
+suspend fun <R> registerJob(interval: KontextInterval, ignoredFunc: suspend () -> R) {
+    kontext {
         this.interval = interval
         krun {
             ignoredFunc.invoke()

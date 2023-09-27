@@ -1,19 +1,17 @@
-package hu.kszi2.kortex
+package hu.kszi2.kontext
 
-import hu.kszi2.kortex.KortexInterval
-import hu.kszi2.kortex.kortex
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class KortexTests {
+class KontextTests {
 
     @Test
-    fun kortexScope() {
+    fun kontextScope() {
         var k: Long = 0
 
         runBlocking {
-            kortex {
+            kontext {
                 k = this.interval.delay
             }
         }
@@ -23,9 +21,9 @@ class KortexTests {
     @Test
     fun returnValue() {
         val ret = runBlocking {
-            kortex {
-                interval = KortexInterval.SECOND
-                krunonce { 3 + 2 }
+            kontext {
+                interval = KontextInterval.SECOND
+                krunOnce { 3 + 2 }
             }
         }
         assertEquals("Return value did not match", 5, ret)

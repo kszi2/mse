@@ -1,5 +1,7 @@
 package hu.kszi2.mse
 
+import hu.kszi2.kontext.KontextInterval
+import hu.kszi2.kontext.kontext
 import org.javacord.api.*
 import org.javacord.api.entity.intent.Intent
 import java.io.File

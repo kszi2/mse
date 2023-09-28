@@ -1,21 +1,11 @@
 package hu.kszi2.mse.database
 
-import hu.kszi2.kontext.*
 import hu.kszi2.mse.DBPATH
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.transactions.transactionManager
+import org.jetbrains.exposed.sql.transactions.*
 import java.io.File
 
-suspend fun <R> registerJob(interval: KontextInterval, ignoredFunc: suspend () -> R) {
-    kontext {
-        this.interval = interval
-        krun {
-            ignoredFunc.invoke()
-        }
-    }
-}
 
 fun <T> dbTransaction(db: Database? = null, statement: Transaction.() -> T): T {
     Database.connect("jdbc:sqlite:$DBPATH", "org.sqlite.JDBC")

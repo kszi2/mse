@@ -149,9 +149,23 @@ operator fun KontextInterval.div(other: Long): KontextInterval {
 /**
  * This function creates a context for a Kontext object
  * and executes the [execFunc] parameter
- * @param execFunc the lambda that the Kontext dispatcher will execute
+ * @param execFunc the lambda that the [Kontext] dispatcher will execute
  * @return the object that the [execFunc] returns
  */
 suspend fun <R> kontext(execFunc: suspend Kontext.() -> R): R {
     return run { Kontext().execFunc() }
+}
+
+/**
+ * Registers a reoccurring job with a given interval
+ * @param interval the interval the job should repeat itself
+ * @param execFunc the lambda that the [Kontext] dispatcher will execute
+ */
+suspend fun <R> registerJob(interval: KontextInterval, execFunc: suspend () -> R) {
+    kontext {
+        this.interval = interval
+        krun {
+            execFunc.invoke()
+        }
+    }
 }

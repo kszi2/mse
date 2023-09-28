@@ -1,13 +1,15 @@
 package hu.kszi2.mse.database
 
 import hu.kszi2.mse.DBPATH
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
 import java.io.File
 
-
+/**
+ * Connects to the default database and executes the [statement] at a transaction
+ * @param statement the transaction
+ */
 fun <T> dbTransaction(statement: Transaction.() -> T): T {
     val db: Database? = null
     Database.connect("jdbc:sqlite:$DBPATH", "org.sqlite.JDBC")
@@ -19,6 +21,9 @@ fun <T> dbTransaction(statement: Transaction.() -> T): T {
     )
 }
 
+/**
+ * Initializes the default database if the file does not exist
+ */
 fun dbInitialize() {
     if (File(DBPATH).exists())
         return

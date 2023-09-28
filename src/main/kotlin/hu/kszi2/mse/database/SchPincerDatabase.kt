@@ -4,10 +4,11 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object DBOpenings : IntIdTable() {
     val circleName = varchar("circlename", 50)
-    val nextOpeningDate = long("nextopeningdate").index()
+    val nextOpeningDate = datetime("nextopeningdate").index()
     val outOfStock = bool("outofstock")
 }
 

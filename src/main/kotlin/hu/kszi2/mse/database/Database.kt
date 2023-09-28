@@ -2,12 +2,14 @@ package hu.kszi2.mse.database
 
 import hu.kszi2.mse.DBPATH
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
 import java.io.File
 
 
-fun <T> dbTransaction(db: Database? = null, statement: Transaction.() -> T): T {
+fun <T> dbTransaction(statement: Transaction.() -> T): T {
+    val db: Database? = null
     Database.connect("jdbc:sqlite:$DBPATH", "org.sqlite.JDBC")
     return transaction(
         db.transactionManager.defaultIsolationLevel,
@@ -29,9 +31,8 @@ fun dbInitialize() {
 
         DBOpening.new {
             circleName = "kszi2"
-            nextOpeningDate = LocalDate.fromEpochDays(36000).toEpochDays().toLong()
+            nextOpeningDate = LocalDateTime(1969, 4, 20, 12, 12, 12)
             outOfStock = false
         }
-
     }
 }

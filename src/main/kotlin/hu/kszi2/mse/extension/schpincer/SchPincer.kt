@@ -1,6 +1,7 @@
 package hu.kszi2.mse.extension.schpincer
 
 import hu.kszi2.mse.database.*
+import hu.kszi2.mse.extension.statusch.Statusch
 import kotlinx.datetime.*
 import hu.kszi2.mse.registrable.*
 import io.ktor.client.*
@@ -23,22 +24,33 @@ import java.awt.Color
 
 /**
  * The ID of the notification role
+ * @see announceNewOpening
  */
 const val notificationRoleID: String = "1046057288496054272"
 
 /**
  * The ID of the notification channel
+ * @see announceNewOpening
  */
 const val notificationChannelID: String = "1147612128103125104"
 
 /**
- * The ID of the timezone
+ * The ID of the current timezone
+ * @see readOpeningsFromDB
+ * @see moveNewOpeningsToDB
+ * @see cleanOpeningsFromDB
  */
 const val timeZone: String = "Europe/Budapest"
 
+/**
+ * Registrable extension that represents the [Statusch] add-on
+ * @see RegistrableExtension
+ * @see SchPincerEvent
+ * @see SchPincerCommand
+ */
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
-internal class SchPincerEvent : RegistrableEvent {
+private class SchPincerEvent : RegistrableEvent {
 
     @Serializable
     data class Opening(
@@ -223,6 +235,11 @@ private fun cleanOpeningsFromDB() {
     }
 }
 
+/**
+ * Announces new opening into the designated discord channel,
+ * if there are any
+ * @param api the gateway API
+ */
 fun announceNewOpening(api: DiscordApi) {
     val channel = api.getTextChannelById(notificationChannelID)
 

@@ -5,12 +5,19 @@ import hu.kszi2.mse.registrable.*
 import org.javacord.api.*
 import org.javacord.api.interaction.*
 import hu.kszi2.moscht.rendering.*
+import hu.kszi2.mse.extension.ping.Ping
 import kotlinx.coroutines.*
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.awt.Color
 import java.time.Clock
 import java.time.Instant
 
+/**
+ * Registrable extension that represents the [Statusch] add-on
+ * @see RegistrableExtension
+ * @see StatuschEvent
+ * @see StatuschCommand
+ */
 class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 
 private class StatuschEvent : RegistrableEvent {

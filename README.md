@@ -4,7 +4,6 @@
 
 *A kinda reasonable discord bot with unique features, written in kotlin*
 
-***
 
 > **Note:** this project heavily uses the [Javacord](https://github.com/Javacord/Javacord) library.
 

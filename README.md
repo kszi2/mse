@@ -11,11 +11,11 @@
 
 ## Repo stats
 
-| Progress                                                                                                                           | Code                                                                                                                        |
-|------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| ![GitHub issues](https://img.shields.io/github/issues/kszi2/mse?link=https%3A%2F%2Fgithub.com%2Fkszi2%2Fmse%2Fissues)              | ![GitHub top language](https://img.shields.io/github/languages/top/kszi2/mse)                                               | ![GitHub top language](https://img.shields.io/github/languages/top/kszi2/mse?link=https://kotlinlang.org)                   |
-| ![GitHub pull requests](https://img.shields.io/github/issues-pr/kszi2/mse?link=https://github.com/kszi2/mse/pulls)                 | ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kszi2/mse?link=https://github.com/kszi2/mse) |
-| ![GitHub contributors](https://img.shields.io/github/contributors/kszi2/mse?link=https://github.com/kszi2/mse/graphs/contributors) | ![GitHub all releases](https://img.shields.io/github/downloads/kszi2/mse/total?link=https://github.com/kszi2/mse/releases)  |
+| Progress                                                                                                                         | Code                                                                                                                                        |
+|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| [![GitHub issues](https://img.shields.io/github/issues/kszi2/mse)](https://github.com/kszi2/mse/issues)                          | [![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/kszi2/mse)](https://github.com/kszi2/mse/commits/turnk) |
+| [![GitHub pull requests](https://img.shields.io/github/issues-pr/kszi2/mse)](https://github.com/kszi2/mse/pulls)                 | [![GitHub top language](https://img.shields.io/github/languages/top/kszi2/mse)](https://kotlinlang.org)                                     |
+| [![GitHub contributors](https://img.shields.io/github/contributors/kszi2/mse)](https://github.com/kszi2/mse/graphs/contributors) | [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kszi2/mse)](https://github.com/kszi2/mse)                   |
 
 ## Example usage
 

@@ -21,13 +21,14 @@ internal val BOT_TOKEN = try {
  * Creates a Discord bot via the api
  *
  * @param token the bot token used for authentication
+ * @param invokedApi the block code that the [DiscordApi] invokes
  */
-suspend fun bot(token: String, ignoredApi: suspend DiscordApi.() -> Unit) {
+suspend fun bot(token: String, invokedApi: suspend DiscordApi.() -> Unit) {
     val api = DiscordApiBuilder()
         .setToken(token)
         .addIntents(Intent.MESSAGE_CONTENT)
         .login().join()
 
-    api.ignoredApi()
+    api.invokedApi()
 }
 

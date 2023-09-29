@@ -1,6 +1,8 @@
 package hu.kszi2.mse.extension.schpincer
 
 import hu.kszi2.mse.database.*
+import hu.kszi2.mse.extension.statusch.Statusch
+import kotlinx.datetime.*
 import hu.kszi2.mse.registrable.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -19,21 +21,36 @@ import org.javacord.api.entity.message.mention.AllowedMentionsBuilder
 import org.javacord.api.interaction.*
 import org.jetbrains.exposed.sql.selectAll
 import java.awt.Color
-import java.time.*
 
 /**
  * The ID of the notification role
+ * @see announceNewOpening
  */
 const val notificationRoleID: String = "1046057288496054272"
 
 /**
  * The ID of the notification channel
+ * @see announceNewOpening
  */
 const val notificationChannelID: String = "1147612128103125104"
 
+/**
+ * The ID of the current timezone
+ * @see readOpeningsFromDB
+ * @see moveNewOpeningsToDB
+ * @see cleanOpeningsFromDB
+ */
+const val timeZone: String = "Europe/Budapest"
+
+/**
+ * Registrable extension that represents the [Statusch] add-on
+ * @see RegistrableExtension
+ * @see SchPincerEvent
+ * @see SchPincerCommand
+ */
 class SchPincer : RegistrableExtension(SchPincerCommand(), SchPincerEvent())
 
-internal class SchPincerEvent : RegistrableEvent {
+private class SchPincerEvent : RegistrableEvent {
 
     @Serializable
     data class Opening(
@@ -96,7 +113,7 @@ internal class SchPincerEvent : RegistrableEvent {
                 "${
                     datetime.dayOfMonth.toString().padStart(2, '0')
                 }/${
-                    datetime.monthValue.toString().padStart(2, '0')
+                    datetime.monthNumber.toString().padStart(2, '0')
                 }/${datetime.year} ${
                     datetime.hour.toString().padStart(2, '0')
                 }:${datetime.minute.toString().padStart(2, '0')}"
@@ -106,7 +123,7 @@ internal class SchPincerEvent : RegistrableEvent {
         val embed = EmbedBuilder()
             .setColor(Color.decode("#FFCCEE"))
             .setTitle("Openings :fork_and_knife:")
-            .setTimestamp(Instant.now(Clock.systemUTC()))
+            .setTimestampToNow()
             .setUrl("https://schpincer.sch.bme.hu")
 
         //if there aren't any openings
@@ -116,7 +133,7 @@ internal class SchPincerEvent : RegistrableEvent {
         }
 
         openings.forEach {
-            embed.addField("**${it.name}** :green_circle:", parseDateTime(LocalDateTime.ofEpochSecond(it.epoch / 1000, 0, ZoneOffset.ofHours(2))), true)
+            embed.addField("**${it.name}** :green_circle:", parseDateTime(Instant.fromEpochMilliseconds(it.epoch).toLocalDateTime(TimeZone.of(timeZone))), true)
             embed.addField("", "")
         }
         return embed
@@ -182,7 +199,7 @@ private fun readOpeningsFromDB(): MutableList<SchPincerEvent.Opening> {
         databaseOpeningContent = DBOpenings.selectAll().map {
             SchPincerEvent.Opening(
                 it[DBOpenings.circleName],
-                it[DBOpenings.nextOpeningDate],
+                it[DBOpenings.nextOpeningDate].toInstant(TimeZone.of(timeZone)).toEpochMilliseconds(),
                 it[DBOpenings.outOfStock]
             )
         }.toMutableList()
@@ -199,7 +216,7 @@ private fun moveNewOpeningsToDB(): List<SchPincerEvent.Opening> {
             newOpenings.forEach {
                 DBOpening.new {
                     circleName = it.name
-                    nextOpeningDate = it.epoch
+                    nextOpeningDate = Instant.fromEpochMilliseconds(it.epoch).toLocalDateTime(TimeZone.of(timeZone))
                     outOfStock = it.negstock
                 }
             }
@@ -212,12 +229,17 @@ private fun moveNewOpeningsToDB(): List<SchPincerEvent.Opening> {
 private fun cleanOpeningsFromDB() {
     dbTransaction {
         val oldOpenings = DBOpening.find {
-            DBOpenings.nextOpeningDate lessEq LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(0))
+            DBOpenings.nextOpeningDate.lessEq(Clock.System.now().toLocalDateTime(TimeZone.of(timeZone)))
         }
         oldOpenings.forEach { it.delete() }
     }
 }
 
+/**
+ * Announces new opening into the designated discord channel,
+ * if there are any
+ * @param api the gateway API
+ */
 fun announceNewOpening(api: DiscordApi) {
     val channel = api.getTextChannelById(notificationChannelID)
 

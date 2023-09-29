@@ -5,6 +5,12 @@ import org.javacord.api.*
 import org.javacord.api.entity.message.MessageFlag
 import org.javacord.api.interaction.*
 
+/**
+ * Registrable extension that represents the [Ping] add-on
+ * @see RegistrableExtension
+ * @see PingEvent
+ * @see PingCommand
+ */
 class Ping : RegistrableExtension(PingCommand(), PingEvent())
 
 private class PingEvent : RegistrableEvent {

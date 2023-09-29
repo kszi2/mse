@@ -1,6 +1,8 @@
 # MSE
 
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/kszi2/mse/gradle.yml) ![GitHub release (with filter)](https://img.shields.io/github/v/release/kszi2/mse) ![GitHub](https://img.shields.io/github/license/kszi2/mse)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/kszi2/mse/gradle.yml)](https://github.com/kszi2/mse/actions/workflows/gradle.yml)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/kszi2/mse)](https://github.com/kszi2/mse/releases/latest/)
+[![GitHub](https://img.shields.io/github/license/kszi2/mse)](https://github.com/kszi2/mse/blob/turnk/LICENSE)
 
 *A kinda reasonable discord bot with unique features, written in kotlin*
 
@@ -9,11 +11,11 @@
 
 ## Repo stats
 
-| Progress                                                                     | Code                                                                                      |
-|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| ![GitHub issues](https://img.shields.io/github/issues-raw/kszi2/mse)         | ![GitHub top language](https://img.shields.io/github/languages/top/kszi2/mse)             |
-| ![GitHub pull requests](https://img.shields.io/github/issues-pr/kszi2/mse)   | ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kszi2/mse) |
-| ![GitHub contributors](https://img.shields.io/github/contributors/kszi2/mse) | ![GitHub all releases](https://img.shields.io/github/downloads/kszi2/mse/total)           |
+| Progress                                                                                                                         | Code                                                                                                                                        |
+|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| [![GitHub issues](https://img.shields.io/github/issues/kszi2/mse)](https://github.com/kszi2/mse/issues)                          | [![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/kszi2/mse)](https://github.com/kszi2/mse/commits/turnk) |
+| [![GitHub pull requests](https://img.shields.io/github/issues-pr/kszi2/mse)](https://github.com/kszi2/mse/pulls)                 | [![GitHub top language](https://img.shields.io/github/languages/top/kszi2/mse)](https://kotlinlang.org)                                     |
+| [![GitHub contributors](https://img.shields.io/github/contributors/kszi2/mse)](https://github.com/kszi2/mse/graphs/contributors) | [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kszi2/mse)](https://github.com/kszi2/mse)                   |
 
 ## Example usage
 

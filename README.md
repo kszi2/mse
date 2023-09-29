@@ -1,4 +1,5 @@
-# MSE ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/kszi2/mse/gradle.yml) ![GitHub release (with filter)](https://img.shields.io/github/v/release/kszi2/mse) ![GitHub](https://img.shields.io/github/license/kszi2/mse)
+# MSE
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/kszi2/mse/gradle.yml) ![GitHub release (with filter)](https://img.shields.io/github/v/release/kszi2/mse) ![GitHub](https://img.shields.io/github/license/kszi2/mse)
 
 *A kinda reasonable discord bot with unique features, written in kotlin*
 

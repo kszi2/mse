@@ -77,7 +77,7 @@ private class SchPincerEvent : RegistrableEvent {
 
     internal suspend fun apiParseBody(): Set<Opening> {
         val now: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/now"))
-        val tomorrow: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/tomorrow"))
+        //val tomorrow: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/tomorrow"))
 
         //parser
         return try {
@@ -87,11 +87,11 @@ private class SchPincerEvent : RegistrableEvent {
                     ret.add(it)
                 }
             }
-            json.decodeFromString<List<Opening>>(tomorrow).forEach {
-                if (!it.negstock) {
-                    ret.add(it)
-                }
-            }
+//            json.decodeFromString<List<Opening>>(tomorrow).forEach {
+//                if (!it.negstock) {
+//                    ret.add(it)
+//                }
+//            }
             ret
         } catch (_: Throwable) {
             setOf()

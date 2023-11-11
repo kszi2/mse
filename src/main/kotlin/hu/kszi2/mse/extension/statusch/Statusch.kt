@@ -36,7 +36,7 @@ private class StatuschEvent : RegistrableEvent {
     }
 
     private fun figureFilter(option: String): (Machine) -> Boolean {
-        return when (option) {
+        return when (option.lowercase()) {
             "w" -> { m: Machine -> m.type == MachineType.WashingMachine }
 
             "wa" -> { m: Machine ->

@@ -3,7 +3,7 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN ["gradle", "distTar"]
 
-FROM ibm-semeru-runtimes:open-17-jdk
+FROM ibm-semeru-runtimes:open-18-jdk
 RUN mkdir /app
 COPY --from=mse_build /home/gradle/src/build/distributions/mse-*.tar /app/mse.tar
 WORKDIR /app

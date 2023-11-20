@@ -5,7 +5,6 @@ import hu.kszi2.mse.registrable.*
 import org.javacord.api.*
 import org.javacord.api.interaction.*
 import hu.kszi2.moscht.rendering.*
-import hu.kszi2.mse.extension.ping.Ping
 import kotlinx.coroutines.*
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import java.awt.Color
@@ -36,7 +35,7 @@ private class StatuschEvent : RegistrableEvent {
     }
 
     private fun figureFilter(option: String): (Machine) -> Boolean {
-        return when (option) {
+        return when (option.lowercase()) {
             "w" -> { m: Machine -> m.type == MachineType.WashingMachine }
 
             "wa" -> { m: Machine ->

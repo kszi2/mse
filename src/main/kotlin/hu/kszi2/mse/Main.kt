@@ -3,6 +3,7 @@ package hu.kszi2.mse
 import hu.kszi2.kontext.*
 import hu.kszi2.mse.database.dbInitialize
 import hu.kszi2.mse.extension.ping.*
+import hu.kszi2.mse.extension.reminder.Reminder
 import hu.kszi2.mse.extension.schpincer.*
 import hu.kszi2.mse.extension.statusch.*
 import hu.kszi2.mse.registrable.*
@@ -19,7 +20,7 @@ suspend fun main() {
     dbInitialize()
 
     bot(BOT_TOKEN) {
-        registerExtension(Statusch(), Ping(), SchPincer())
+        registerExtension(Statusch(), Ping(), SchPincer(), Reminder())
         println(createBotInvite().toString())
 
         registerJob(KontextInterval.MINUTE * 5) { announceNewOpening(this@bot) }

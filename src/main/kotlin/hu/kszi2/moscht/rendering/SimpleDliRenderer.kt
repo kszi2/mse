@@ -26,11 +26,8 @@ class SimpleDliRenderer : MachineRenderer {
     }
 
     private fun renderMachine(machine: Machine) {
-        reply += if (machine.level < 10) {
-            "`0${machine.level}.` ${renderType(machine.type)}: ${renderStatus(machine.status)}\n"
-        } else {
-            "`${machine.level}.` ${renderType(machine.type)}: ${renderStatus(machine.status)}\n"
-        }
+        reply +=
+            "`${machine.level.toString().padStart(2, '0')}.` ${renderType(machine.type)}: ${renderStatus(machine.status)}\n"
     }
 
     private fun renderStatus(status: MachineStatus): String {

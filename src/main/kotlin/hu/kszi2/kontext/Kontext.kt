@@ -20,7 +20,11 @@ class Kontext {
 
     private fun announceJobRun(interval: KontextInterval, recurring: Boolean = false) {
         if (recurring) {
-            logger.debug("Running recurring job with name {} and {} delay", Thread.currentThread().stackTrace[1].methodName, LocalTime.fromMillisecondOfDay(interval.delay.toInt()))
+            logger.debug(
+                "Running recurring job with name {} and {} delay",
+                Thread.currentThread().stackTrace[1].methodName,
+                LocalTime.fromMillisecondOfDay(interval.delay.toInt())
+            )
         } else {
             logger.debug("Running one-time job with name ${Thread.currentThread().stackTrace[1].methodName}")
         }
@@ -32,12 +36,9 @@ class Kontext {
      * @return the object that the [execBlock] returns
      */
     suspend fun <R> krunOnce(execBlock: suspend () -> R): R {
-        val ret = GlobalScope.async {
-            delay(this@Kontext.interval.delay)
-            announceJobRun(this@Kontext.interval)
-            execBlock()
-        }.await()
-        return ret
+        delay(this@Kontext.interval.delay)
+        announceJobRun(this@Kontext.interval)
+        return execBlock()
     }
 
     /**
@@ -45,16 +46,12 @@ class Kontext {
      * @param execBlock the lambda that the Kortex dispatcher will execute
      * @return the job that the dispatcher created
      */
-    suspend fun <R> krun(execBlock: suspend () -> R): Job {
-        val job = GlobalScope.async {
-            while (true) {
-                announceJobRun(this@Kontext.interval, true)
-                execBlock()
-                delay(this@Kontext.interval.delay)
-            }
-
+    suspend fun <R> krun(execBlock: suspend () -> R) {
+        while (true) {
+            announceJobRun(this@Kontext.interval, true)
+            execBlock()
+            delay(this@Kontext.interval.delay)
         }
-        return job
     }
 }
 
@@ -161,7 +158,7 @@ suspend fun <R> kontext(execFunc: suspend Kontext.() -> R): R {
  * @param interval the interval the job should repeat itself
  * @param execFunc the lambda that the [Kontext] dispatcher will execute
  */
-suspend fun <R> registerJob(interval: KontextInterval, execFunc: suspend () -> R) {
+suspend fun <R> registerJob(interval: KontextInterval = KontextInterval.MINUTE, execFunc: suspend () -> R) {
     kontext {
         this.interval = interval
         krun {

@@ -20,18 +20,16 @@ import java.time.Instant
 class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 
 private class StatuschEvent : RegistrableEvent {
-    private fun getData(filter: (Machine) -> Boolean): String {
-        var content = "Something went wrong. Try again later."
+    @OptIn(DelicateCoroutinesApi::class)
+    private suspend fun getData(filter: (Machine) -> Boolean): String {
         val renderer = SimpleDliRenderer()
         //creating context... mert ugye a szálkezelés egyszerű
-        runBlocking {
-            val job = launch {
-                renderer.renderData(MosogepApiV1(), MosogepApiV2()) { filter(it) }
-                content = renderer.getData()
-            }
-            job.join()
+        return try {
+            renderer.renderData(MosogepApiV1(), MosogepApiV2()) { filter(it) }
+            renderer.getData()
+        } catch (ex: RuntimeException) {
+            "Something went wrong. Try again later."
         }
-        return content
     }
 
     private fun figureFilter(option: String): (Machine) -> Boolean {
@@ -52,7 +50,7 @@ private class StatuschEvent : RegistrableEvent {
         }
     }
 
-    override fun registerEvent(api: DiscordApi) {
+    override suspend fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "moscht") {
@@ -61,19 +59,20 @@ private class StatuschEvent : RegistrableEvent {
                 val filter = if (expr.isPresent) {
                     figureFilter(expr.get())
                 } else { m: Machine -> true }
+                runBlocking {
+                    val embed = EmbedBuilder()
+                        .setColor(Color.decode("#FFCCEE"))
+                        .setTitle("StatuSCH :sweat_drops:")
+                        .setDescription(getData(filter))
+                        .setTimestamp(Instant.now(Clock.systemUTC()))
+                        .setUrl("https://mosogep.sch.bme.hu")
 
-                val embed = EmbedBuilder()
-                    .setColor(Color.decode("#FFCCEE"))
-                    .setTitle("StatuSCH :sweat_drops:")
-                    .setDescription(getData(filter))
-                    .setTimestamp(Instant.now(Clock.systemUTC()))
-                    .setUrl("https://mosogep.sch.bme.hu")
-
-                interaction
-                    .createImmediateResponder()
-                    .setContent("")
-                    .addEmbed(embed)
-                    .respond()
+                    interaction
+                        .createImmediateResponder()
+                        .setContent("")
+                        .addEmbed(embed)
+                        .respond()
+                }
             }
         }
     }
@@ -81,7 +80,11 @@ private class StatuschEvent : RegistrableEvent {
 
 private class StatuschCommand : RegistrableCommand {
     override fun registerCommand(api: DiscordApi) {
-        SlashCommand.with("moscht", "Request StatuSCH.", mutableListOf(SlashCommandOption.createStringOption("argument", "a/w/wa/d/da", false)))
+        SlashCommand.with(
+            "moscht",
+            "Request StatuSCH.",
+            mutableListOf(SlashCommandOption.createStringOption("argument", "a/w/wa/d/da", false))
+        )
             .createGlobal(api).join()
     }
 }

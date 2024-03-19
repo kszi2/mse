@@ -75,7 +75,7 @@ private class SchPincerEvent : RegistrableEvent {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    internal suspend fun apiParseBody(): Set<Opening> {
+    suspend fun apiParseBody(): Set<Opening> {
         val now: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/now"))
         //val tomorrow: String = apiGetBody(Url("https://schpincer.sch.bme.hu/api/items/tomorrow"))
 
@@ -118,7 +118,7 @@ private class SchPincerEvent : RegistrableEvent {
                     datetime.hour.toString().padStart(2, '0')
                 }:${datetime.minute.toString().padStart(2, '0')}"
 
-    internal fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
+    fun generateEmbed(openings: Set<Opening>): EmbedBuilder {
         //creating embed base
         val embed = EmbedBuilder()
             .setColor(Color.decode("#FFCCEE"))
@@ -139,7 +139,7 @@ private class SchPincerEvent : RegistrableEvent {
         return embed
     }
 
-    override fun registerEvent(api: DiscordApi) {
+    override suspend fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "opening") {

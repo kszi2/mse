@@ -30,7 +30,6 @@ fun dbInitialize() {
 
     Database.connect("jdbc:sqlite:$DBPATH", "org.sqlite.JDBC")
     transaction {
-        addLogger(Slf4jSqlDebugLogger)
 
         SchemaUtils.create(DBOpenings)
 

@@ -8,13 +8,14 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.withTimeout
 
 class MosogepApiV1(private val parser: MachineAsyncParser = DefaultAsyncParser()) : MosogepAsyncApi {
     private val webClient = HttpClient(CIO)
 
     override suspend fun loadMachines(): List<Machine> {
         try {
-            val status = webClient.get("https://mosogep.sch.bme.hu/api/v1/laundry-room/")
+            val status = run { withTimeout(1000) { webClient.get("https://mosogep.sch.bme.hu/api/v1/laundry-room/") } }
             if (status.status != HttpStatusCode.OK) {
                 throw UnreachableApiError("ApiV1")
             }

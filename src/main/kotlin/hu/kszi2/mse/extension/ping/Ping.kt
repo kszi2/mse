@@ -14,7 +14,7 @@ import org.javacord.api.interaction.*
 class Ping : RegistrableExtension(PingCommand(), PingEvent())
 
 private class PingEvent : RegistrableEvent {
-    override fun registerEvent(api: DiscordApi) {
+    override suspend fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
             if (interaction.fullCommandName == "ping") {

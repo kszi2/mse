@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.9.10"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
@@ -7,7 +5,7 @@ plugins {
 }
 
 group = "hu.kszi2"
-version = "v2.0"
+version = "v2.1"
 
 repositories {
     mavenCentral()
@@ -33,7 +31,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(18)
+    jvmToolchain(17)
 }
 
 configurations {

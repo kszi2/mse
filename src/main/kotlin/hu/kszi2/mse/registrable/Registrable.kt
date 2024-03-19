@@ -17,7 +17,7 @@ interface RegistrableEvent {
      *
      * @param api the discord api with a gateway
      */
-    fun registerEvent(api: DiscordApi)
+    suspend fun registerEvent(api: DiscordApi)
 }
 
 /**
@@ -34,7 +34,7 @@ private fun DiscordApi.registerCommand(command: RegistrableCommand) {
  *
  * @param event the registrable event
  */
-private fun DiscordApi.registerEvent(event: RegistrableEvent) {
+private suspend fun DiscordApi.registerEvent(event: RegistrableEvent) {
     event.registerEvent(this@registerEvent)
 }
 
@@ -43,7 +43,7 @@ private fun DiscordApi.registerEvent(event: RegistrableEvent) {
  *
  * @param extensions the registrable extensions
  */
-fun DiscordApi.registerExtension(vararg extensions: RegistrableExtension) {
+suspend fun DiscordApi.registerExtension(vararg extensions: RegistrableExtension) {
     extensions.forEach { it.registerExtension(this@registerExtension) }
 }
 
@@ -60,7 +60,7 @@ abstract class RegistrableExtension(private val command: RegistrableCommand, pri
      *
      * @param api the discord api with a gateway
      */
-    fun registerExtension(api: DiscordApi) {
+    suspend fun registerExtension(api: DiscordApi) {
         api.registerCommand(command)
         api.registerEvent(event)
     }

@@ -2,12 +2,10 @@ package hu.kszi2.mse.extension.schpincer
 
 import hu.kszi2.mse.database.*
 import hu.kszi2.mse.extension.statusch.Statusch
+import hu.kszi2.mse.network.NetworkClient
 import kotlinx.datetime.*
 import hu.kszi2.mse.registrable.*
-import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
@@ -99,13 +97,7 @@ private class SchPincerEvent : RegistrableEvent {
     }
 
     private suspend fun apiGetBody(url: Url): String {
-        val client = HttpClient(CIO) {
-            install(UserAgent) {
-                agent =
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0"
-            }
-        }
-        return run { withTimeout(2000) { client.get(url).body() } }
+        return run { withTimeout(2000) { NetworkClient.client.get(url).body() } }
     }
 
     private fun parseDateTime(datetime: LocalDateTime) =

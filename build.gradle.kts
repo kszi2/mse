@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "hu.kszi2"
-version = "v2.1"
+version = "v3.0"
 
 repositories {
     mavenCentral()

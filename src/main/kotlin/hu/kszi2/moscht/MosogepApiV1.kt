@@ -3,15 +3,15 @@ package hu.kszi2.moscht
 import hu.kszi2.moscht.MosogepAsyncApi.UnreachableApiError
 import hu.kszi2.moscht.parsing.DefaultAsyncParser
 import hu.kszi2.moscht.parsing.MachineAsyncParser
+import hu.kszi2.mse.network.NetworkClient
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.withTimeout
 
 class MosogepApiV1(private val parser: MachineAsyncParser = DefaultAsyncParser()) : MosogepAsyncApi {
-    private val webClient = HttpClient(CIO)
+    private val webClient: HttpClient = NetworkClient.client //Reuse singleton instance
 
     override suspend fun loadMachines(): List<Machine> {
         try {

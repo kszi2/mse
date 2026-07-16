@@ -20,12 +20,16 @@ import java.time.Instant
 class Statusch : RegistrableExtension(StatuschCommand(), StatuschEvent())
 
 private class StatuschEvent : RegistrableEvent {
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val apiV1 = MosogepApiV1()
+    private val apiV2 = MosogepApiV2()
+
     @OptIn(DelicateCoroutinesApi::class)
     private suspend fun getData(filter: (Machine) -> Boolean): String {
-        val renderer = SimpleDliRenderer()
-        //creating context... mert ugye a szálkezelés egyszerű
         return try {
-            renderer.renderData(MosogepApiV1(), MosogepApiV2()) { filter(it) }
+            //Instantiate the renderer locally per-request!
+            val renderer = SimpleDliRenderer()
+            renderer.renderData(apiV1, apiV2) { filter(it) }
             renderer.getData()
         } catch (ex: RuntimeException) {
             "Something went wrong. Try again later."
@@ -53,25 +57,28 @@ private class StatuschEvent : RegistrableEvent {
     override suspend fun registerEvent(api: DiscordApi) {
         api.addSlashCommandCreateListener { event ->
             val interaction: SlashCommandInteraction = event.slashCommandInteraction
-            if (interaction.fullCommandName == "moscht") {
-                val expr = interaction.getArgumentStringValueByName("argument")
+            if (interaction.fullCommandName != "moscht") return@addSlashCommandCreateListener
 
-                val filter = if (expr.isPresent) {
-                    figureFilter(expr.get())
-                } else { m: Machine -> true }
-                runBlocking {
-                    val embed = EmbedBuilder()
-                        .setColor(Color.decode("#FFCCEE"))
-                        .setTitle("StatuSCH :sweat_drops:")
-                        .setDescription(getData(filter))
-                        .setTimestamp(Instant.now(Clock.systemUTC()))
-                        .setUrl("https://mosogep.sch.bme.hu")
+            // Tell Discord we are thinking (extends timeout window to 15 minutes)
+            val responderFuture = interaction.respondLater()
 
-                    interaction
-                        .createImmediateResponder()
-                        .setContent("")
-                        .addEmbed(embed)
-                        .respond()
+            val expr = interaction.getArgumentStringValueByName("argument")
+            val filter = if (expr.isPresent) figureFilter(expr.get()) else { _: Machine -> true }
+
+            // Launch the non-blocking coroutine inside our class-level scope
+            scope.launch {
+                val data = getData(filter)
+
+                val embed = EmbedBuilder()
+                    .setColor(Color.decode("#FFCCEE"))
+                    .setTitle("StatuSCH :sweat_drops:")
+                    .setDescription(data)
+                    .setTimestamp(Instant.now(Clock.systemUTC()))
+                    .setUrl("https://mosogep.sch.bme.hu")
+
+                // Edit our original "thinking" response with the final embed
+                responderFuture.thenAccept { updater ->
+                    updater.addEmbed(embed).update()
                 }
             }
         }
